@@ -2,6 +2,7 @@ package peru.volcanes.volcanesper;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -85,11 +86,16 @@ public class Firebaseinstancedatatokentwo extends FirebaseInstanceIDService {
                         BackoffPolicy.LINEAR,
                         OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
                         TimeUnit.MILLISECONDS)
-                .setInitialDelay(3, TimeUnit.MINUTES)
+                .setInitialDelay(7, TimeUnit.MINUTES)
                 .setConstraints(constraints)
                 .build();
 
         WorkManager.getInstance().enqueue(uploadWorkRequest);
+
+
+
+        //WorkManager.cancelWorkById(uploadWorkRequest.getId());
+
     }
 
     private void checktable(){
@@ -110,6 +116,20 @@ public class Firebaseinstancedatatokentwo extends FirebaseInstanceIDService {
             Long idresultante = db2.insert(Utilidades.TABLA_NOTIFICACIONES, Utilidades.CAMPO_ID, values);
             //Toast.makeText(getApplicationContext(), "Resultante:" + idresultante + "", Toast.LENGTH_LONG);
             Log.d("el resultante: ","Resultante:" + idresultante + ""   );
+
+
+            try {
+                FileOutputStream fileOutputStream_tipo = getApplicationContext().openFileOutput("ultima_notificacion", Context.MODE_PRIVATE);
+                fileOutputStream_tipo.write("mensaje1&&mensaje1&&mensaje3&&mensaje4&&mensaje5&&mensaje6".getBytes());
+                fileOutputStream_tipo.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
         }
     }
 
@@ -354,15 +374,15 @@ public class Firebaseinstancedatatokentwo extends FirebaseInstanceIDService {
 
             FirebaseMessaging.getInstance().subscribeToTopic(Message5);
 
-            FirebaseMessaging.getInstance().subscribeToTopic("VOLCANESPERU500033344");
+            //FirebaseMessaging.getInstance().subscribeToTopic("VOLCANESPERU500033344");
 
-/*
+
             Random random = new Random();
-            Integer d = random.nextInt(20);
+            Integer d = random.nextInt(10);
             String ds = String.valueOf(d);
             Log.d("VALORF RANDOM",ds + " /////" + dato );
             FirebaseMessaging.getInstance().subscribeToTopic("VOLCANESPERU"+ds);
-*/
+
 
 
 
@@ -453,6 +473,8 @@ public class Firebaseinstancedatatokentwo extends FirebaseInstanceIDService {
 
         //  String file_name = "datos_configuracion";
 
+        String file_ultimanotificacion = "ultima_notificacion";
+
         String file_ramdom = "ramdom_number_file";
 
         String file_vibrar = "vibrar_file";
@@ -463,6 +485,9 @@ public class Firebaseinstancedatatokentwo extends FirebaseInstanceIDService {
 
 
         String file_nombre_ringtone = "nombre_ringtone__file";
+
+
+        String ultimanotificacion_val =  "notexist";
 
 
         String vibrar_val =  "11111";
@@ -484,6 +509,11 @@ public class Firebaseinstancedatatokentwo extends FirebaseInstanceIDService {
             // fileOutputStream.write(parametro4.getBytes());
             //  fileOutputStream.write(parametro5.getBytes());
             //  fileOutputStream.write(parametro6.getBytes());
+
+            FileOutputStream fileOutputStream_ultimanot = openFileOutput(file_ultimanotificacion, MODE_PRIVATE);
+            fileOutputStream_ultimanot.write(ultimanotificacion_val.getBytes());
+
+
 
             FileOutputStream fileOutputStream_ramdom = openFileOutput(file_ramdom, MODE_PRIVATE);
             fileOutputStream_ramdom.write(vibrar_val.getBytes());

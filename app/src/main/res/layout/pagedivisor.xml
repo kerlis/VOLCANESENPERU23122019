@@ -12,28 +12,36 @@
         android:orientation="vertical">
 
         <Button   android:layout_width="match_parent"
-            android:visibility="visible"
+            android:visibility="gone"
              android:id="@+id/comprobarconexion"
             android:text="comprobar"
             android:layout_height="65dp"/>
 
         <Button   android:layout_width="match_parent"
-            android:visibility="visible"
+            android:visibility="gone"
              android:layout_below="@+id/comprobarconexion"
             android:id="@+id/lastrecord"
             android:text="ver last record"
             android:layout_height="wrap_content"/>
 
         <Button   android:layout_width="match_parent"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_below="@+id/lastrecord"
             android:id="@+id/vertoken"
             android:text="VER TOKEN"
             android:layout_height="wrap_content"/>
 
+        <Button   android:layout_width="match_parent"
+            android:visibility="gone"
+            android:layout_below="@+id/vertoken"
+            android:id="@+id/vermemoria"
+            android:text="VER MEMORIA"
+            android:layout_height="wrap_content"/>
+
+
 
         <RelativeLayout android:layout_width="match_parent"
-            android:layout_below="@+id/vertoken"
+            android:layout_below="@+id/vermemoria"
             android:layout_height="60dp"
             android:id="@+id/encabezado2">
             <RelativeLayout

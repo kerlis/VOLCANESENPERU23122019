@@ -19,6 +19,8 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import java.io.BufferedReader
+import java.io.FileNotFoundException
+import java.io.IOException
 import java.io.InputStreamReader
 import java.util.*
 class Firebasemessagingthird : FirebaseMessagingService() {
@@ -1969,6 +1971,19 @@ class Firebasemessagingthird : FirebaseMessagingService() {
         val idresultante = db.insert(Utilidades.TABLA_NOTIFICACIONES, Utilidades.CAMPO_ID, values)
         Log.d("el resultante: ", "Resultante:$idresultante")
 
+
+        val Message5 = dato
+        val file_namex = "ultima_notificacion"
+        try {
+            val fileOutputStream = openFileOutput(file_namex, Context.MODE_PRIVATE)
+            fileOutputStream.write(Message5.toByteArray())
+            fileOutputStream.close()
+            //  Toast.makeText(getApplicationContext(), "Configurado", Toast.LENGTH_LONG).show();
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 
     private fun norecibir() {

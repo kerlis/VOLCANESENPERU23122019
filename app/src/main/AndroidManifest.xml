@@ -94,12 +94,7 @@
         android:name="sistemasfireg.igp.org.detectasismo.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
-
     <uses-permission android:name="android.permission.VIBRATE" />
-
-
-
-
     <uses-permission android:name="sistemasfireg.igp.org.detectasismo.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 

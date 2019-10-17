@@ -28,6 +28,9 @@ import peru.volcanes.volcanesper.m_model.Ultimanotificacionobj;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -82,6 +85,13 @@ public class Periodwork extends Worker {
     Integer valorentero   = 0;
     String valorramdomesound = null;
 
+
+    String ultimanotificacionval = null;
+
+
+    String not_lahar, notcenizas, notreporte1, notreporte2;
+
+
     //String valorramdomesound = null;
 
     private static final String TAG = "Periodwork";
@@ -107,8 +117,6 @@ public class Periodwork extends Worker {
             res.moveToNext();
         }
 
-
-
         String valor3  = aqui;
         String valorextraido  = valor3.split("&")[0];
         String volcan = valor3.split("&")[1];
@@ -120,7 +128,21 @@ public class Periodwork extends Worker {
         String horautc  = valor3.split("&")[7];
 
 
-        Log.d("TIPO: ", valorextraido);
+        String file_ultimanotificacion = getApplicationContext().getFilesDir() + "/"+"ultima_notificacion";
+        try {
+            FileInputStream fileultimanotificacion = new FileInputStream(new File(file_ultimanotificacion));
+            InputStreamReader InputRead_vibrar = new InputStreamReader(fileultimanotificacion);
+            char[] inputBuffer = new char[READ_BLOCK_SIZE];
+            int charRead;
+            charRead = InputRead_vibrar.read(inputBuffer);
+            ultimanotificacionval = String.copyValueOf(inputBuffer, 0, charRead);
+            InputRead_vibrar.close();
+            Log.d(TAG, "VIBRATION: " + valorsonido);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Log.d("ULTIMA NOTIFICACION: ", ultimanotificacionval);
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -131,7 +153,7 @@ public class Periodwork extends Worker {
             info = Objects.requireNonNull(cmanager).getActiveNetworkInfo();
         }
         if (info != null && info.isConnected()) {
-            ultimanotificacion(aqui, valorextraido);
+            ultimanotificacion(aqui, valorextraido, ultimanotificacionval);
             if (info.getType() == ConnectivityManager.TYPE_WIFI) {
                 Log.d("CONEXION","EXISTE CONECTIVIDAD");
             } else if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
@@ -143,7 +165,7 @@ public class Periodwork extends Worker {
         return Result.retry();
     }
 
-    private void ultimanotificacion(String datoslast, String tipo) {
+    private void ultimanotificacion(String datoslast, String tipo, String valormemoria) {
         DatabaseReference mDatabase;
         mDatabase = FirebaseDatabase.getInstance("https://volcanesperu-d84cf.firebaseio.com/").getReference("actividadvolcanica");
         mDatabase.keepSynced(true);
@@ -151,25 +173,25 @@ public class Periodwork extends Worker {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Ultimanotificacionobj sreporte = dataSnapshot.getValue(Ultimanotificacionobj.class);
-                guardar_pref(sreporte, datoslast, tipo);
+                guardar_pref(sreporte, datoslast, tipo, valormemoria);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 Ultimanotificacionobj sreporte = dataSnapshot.getValue(Ultimanotificacionobj.class);
-                guardar_pref(sreporte, datoslast, tipo);
+                guardar_pref(sreporte, datoslast, tipo, valormemoria);
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 Ultimanotificacionobj sreporte = dataSnapshot.getValue(Ultimanotificacionobj.class);
-                guardar_pref(sreporte, datoslast, tipo);
+                guardar_pref(sreporte, datoslast, tipo, valormemoria);
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
                 Ultimanotificacionobj sreporte = dataSnapshot.getValue(Ultimanotificacionobj.class);
-                guardar_pref(sreporte, datoslast, tipo);
+                guardar_pref(sreporte, datoslast, tipo, valormemoria);
             }
 
             @Override
@@ -178,7 +200,7 @@ public class Periodwork extends Worker {
         });
     }
 
-    private void guardar_pref(Ultimanotificacionobj sreporte, String datos, String tipo) {
+    private void guardar_pref(Ultimanotificacionobj sreporte, String datos, String tipo, String valormemoria) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("ultsismo", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
@@ -218,10 +240,10 @@ public class Periodwork extends Worker {
 
         editor.putString("Codigovolcan", sreporte.getCodigovolcan());
         editor.apply();
-        mostrar_ult_sismo(datos, tipo);
+        mostrar_ult_sismo(datos, tipo, valormemoria);
     }
 
-    private void mostrar_ult_sismo(String datoslastdos, String tipo) {
+    private void mostrar_ult_sismo(String datoslastdos, String tipo, String valormemoria) {
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("ultsismo", Context.MODE_PRIVATE);
         String ultimodato_1 = prefs.getString("Tiponotificacion_reporteactividad","");
         String ultimodato_2 = prefs.getString("Tiponotificacion_lahar","");
@@ -270,11 +292,27 @@ public class Periodwork extends Worker {
             String horautc  = datoslastdos.split("&")[5];
             String observaciones = datoslastdos.split("&")[6];
             String simulacro  = datoslastdos.split("&")[7];
-            if(tiponotificacion2.equals("n01") && volcan.equals(Volcan_lahar) && fecha.equals(Fecha_lahar) && hora.equals(Hora_lahar)){
+
+
+            String tiponotificacion2_m  = valormemoria.split("&")[0];
+            String volcan_m = valormemoria.split("&")[1];
+            String tipodevento_m  = valormemoria.split("&")[2];
+            String fecha_m  = valormemoria.split("&")[3];
+            String hora_m = valormemoria.split("&")[4];
+            String horautc_m  = valormemoria.split("&")[5];
+            String observaciones_m = valormemoria.split("&")[6];
+            String simulacro_m  = valormemoria.split("&")[7];
+
+
+
+            if(tiponotificacion2.equals("n01") && volcan.equals(Volcan_lahar) && fecha.equals(Fecha_lahar) && hora.equals(Hora_lahar) && tiponotificacion2_m.equals("n01") && volcan_m.equals(Volcan_lahar) && fecha_m.equals(Fecha_lahar) && hora_m.equals(Hora_lahar)){
                 Log.d("ENVIO LAHAR ? : ","NO");
             }
+
             else{
                 enviar_notificacion(Tiponotificacion_lahar+"&"+Volcan_lahar+"&"+Tipodevento_lahar+"&"+Fecha_lahar+"&"+Hora_lahar+"&"+Horautc_lahar+"&"+Observaciones_lahar+"&"+Simulacro_lahar, "n01");
+
+                not_lahar  =  Tiponotificacion_lahar+"&"+Volcan_lahar+"&"+Tipodevento_lahar+"&"+Fecha_lahar+"&"+Hora_lahar+"&"+Horautc_lahar+"&"+Observaciones_lahar+"&"+Simulacro_lahar;
 
                 Conexionsql conn = new Conexionsql(getApplicationContext(),"bd_notificaciones", null,1 );
                 SQLiteDatabase db = conn.getWritableDatabase();
@@ -284,7 +322,24 @@ public class Periodwork extends Worker {
                 Long idresultante = db.insert(Utilidades.TABLA_NOTIFICACIONES, Utilidades.CAMPO_ID, values);
                 Log.d("el resultante: ","Resultante:" + idresultante + ""   );
                 Log.d("ENVIO LAHAR ?: ","YES");
+
+
+
+
+                try {
+                    FileOutputStream fileOutputStream_tipo = getApplicationContext().openFileOutput("ultima_notificacion", Context.MODE_PRIVATE);
+                    fileOutputStream_tipo.write(not_lahar.getBytes());
+                    fileOutputStream_tipo.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+
             }
+
         }
 
 
@@ -301,11 +356,27 @@ public class Periodwork extends Worker {
             String analisis = datoslastdos.split("&")[8];
             String conclusiones = datoslastdos.split("&")[9];
 
-            if(tiponotificacion2.equals("n02") && volcan.equals(Codigovolcan_reporteactividad) && fecha.equals(Fecha_reporteactividad) && hora.equals(Hora_reporteactividad)){
+            String tiponotificacion2_m  = valormemoria.split("&")[0];
+            String volcan_m = valormemoria.split("&")[1];
+            String fecha_m = valormemoria.split("&")[2];
+            String hora_m = valormemoria.split("&")[3];
+            String simulacro_m = valormemoria.split("&")[4];
+            String horautc_m = valormemoria.split("&")[5];
+            String reportepdf_m = valormemoria.split("&")[6];
+            String coloralerta_m = valormemoria.split("&")[7];
+            String analisis_m = valormemoria.split("&")[8];
+            String conclusiones_m = valormemoria.split("&")[9];
+
+
+            if(tiponotificacion2.equals("n02") && volcan.equals(Codigovolcan_reporteactividad) && fecha.equals(Fecha_reporteactividad) && hora.equals(Hora_reporteactividad) && tiponotificacion2_m.equals("n02") && volcan_m.equals(Codigovolcan_reporteactividad) && fecha_m.equals(Fecha_reporteactividad) && hora_m.equals(Hora_reporteactividad)){
                 Log.d("ENVIO EXTRAORDINARIO?: ","NO");
             }
             else{
+
                 enviar_notificacion(Tiponotificacion_reporteactividad+"&"+Codigovolcan_reporteactividad+"&"+Fecha_reporteactividad+"&"+Hora_reporteactividad+"&"+Simulacro_reporteactividad+"&"+Horautc_reporteactividad+"&"+Pdfurl_reporteactividad+"&"+Coloralerta_reporteactividad+"&"+Analisis_reporteactividad+"&"+Conclusiones_reporteactividad, "n02");
+
+
+                notreporte2 = Tiponotificacion_reporteactividad+"&"+Codigovolcan_reporteactividad+"&"+Fecha_reporteactividad+"&"+Hora_reporteactividad+"&"+Simulacro_reporteactividad+"&"+Horautc_reporteactividad+"&"+Pdfurl_reporteactividad+"&"+Coloralerta_reporteactividad+"&"+Analisis_reporteactividad+"&"+Conclusiones_reporteactividad;
 
                 Conexionsql conn = new Conexionsql(getApplicationContext(),"bd_notificaciones", null,1 );
                 SQLiteDatabase db = conn.getWritableDatabase();
@@ -315,6 +386,19 @@ public class Periodwork extends Worker {
                 Long idresultante = db.insert(Utilidades.TABLA_NOTIFICACIONES, Utilidades.CAMPO_ID, values);
                 Log.d("el resultante: ","Resultante:" + idresultante + ""   );
                 Log.d("ENVIO EXTRAORDINARIO?: ","YES");
+
+
+                try {
+                    FileOutputStream fileOutputStream_tipo = getApplicationContext().openFileOutput("ultima_notificacion", Context.MODE_PRIVATE);
+                    fileOutputStream_tipo.write(notreporte2.getBytes());
+                    fileOutputStream_tipo.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
             }
 
         }
@@ -336,11 +420,29 @@ public class Periodwork extends Worker {
             String simulacro  = datoslastdos.split("&")[11];
 
 
-            if(tiponotificacion2.equals("n03") && volcan.equals(Volcan_cenizas) && fecha.equals(Fecha_cenizas) && hora.equals(Hora_cenizas)){
+            String tiponotificacion2_m = valormemoria.split("&")[0];
+            String volcan_m  = valormemoria.split("&")[1];
+            String pueblos_m  = valormemoria.split("&")[2];
+            String tipodevento_m  = valormemoria.split("&")[3];
+            String direccion_m  = valormemoria.split("&")[4];
+            String radio_m = valormemoria.split("&")[5];
+            String fecha_m  = valormemoria.split("&")[6];
+            String hora_m  = valormemoria.split("&")[7];
+            String horautc_m  = valormemoria.split("&")[8];
+            String recomendaciones_m  = valormemoria.split("&")[9];
+            String observaciones_m  = valormemoria.split("&")[10];
+            String simulacro_m  = valormemoria.split("&")[11];
+
+
+
+            if(tiponotificacion2.equals("n03") && volcan.equals(Volcan_cenizas) && fecha.equals(Fecha_cenizas) && hora.equals(Hora_cenizas) && tiponotificacion2_m.equals("n03") && volcan_m.equals(Volcan_cenizas) && fecha_m.equals(Fecha_cenizas) && hora_m.equals(Hora_cenizas)){
                 Log.d("ENVIO CENIZAS? : ","NO");
             }
             else{
                 enviar_notificacion(Tiponotificacion_cenizas+"&"+Volcan_cenizas+"&"+Pueblos_cenizas+"&"+Tipodevento_cenizas+"&"+Direccion_cenizas+"&"+Radio_cenizas+"&"+Fecha_cenizas+"&"+Hora_cenizas+"&"+Horautc_cenizas+"&"+Recomendaciones_cenizas+"&"+Observaciones_cenizas+"&"+Simulacro_cenizas, "n03");
+
+                notcenizas = Tiponotificacion_cenizas+"&"+Volcan_cenizas+"&"+Pueblos_cenizas+"&"+Tipodevento_cenizas+"&"+Direccion_cenizas+"&"+Radio_cenizas+"&"+Fecha_cenizas+"&"+Hora_cenizas+"&"+Horautc_cenizas+"&"+Recomendaciones_cenizas+"&"+Observaciones_cenizas+"&"+Simulacro_cenizas;
+
                 Conexionsql conn = new Conexionsql(getApplicationContext(),"bd_notificaciones", null,1 );
                 SQLiteDatabase db = conn.getWritableDatabase();
                 ContentValues values = new ContentValues();
@@ -349,6 +451,18 @@ public class Periodwork extends Worker {
                 Long idresultante = db.insert(Utilidades.TABLA_NOTIFICACIONES, Utilidades.CAMPO_ID, values);
                 Log.d("el resultante: ","Resultante:" + idresultante + ""   );
                 Log.d("ENVIO CENIZAS?: ","YES");
+
+
+                try {
+                    FileOutputStream fileOutputStream_tipo = getApplicationContext().openFileOutput("ultima_notificacion", Context.MODE_PRIVATE);
+                    fileOutputStream_tipo.write(notcenizas.getBytes());
+                    fileOutputStream_tipo.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
 
@@ -366,12 +480,27 @@ public class Periodwork extends Worker {
             String  analisis  = datoslastdos.split("&")[8];
             String conclusiones = datoslastdos.split("&")[9];
 
-            if(tiponotificacion2.equals("n04") && volcan.equals(Codigovolcan_reporteactividad) && fecha.equals(Fecha_reporteactividad) && hora.equals(Hora_reporteactividad)){
+
+            String tiponotificacion2_m  = valormemoria.split("&")[0];
+            String volcan_m  = valormemoria.split("&")[1];
+            String  fecha_m  = valormemoria.split("&")[2];
+            String  hora_m  = valormemoria.split("&")[3];
+            String  simulacro_m  = valormemoria.split("&")[4];
+            String  horautc_m = valormemoria.split("&")[5];
+            String  reportepdf_m  = valormemoria.split("&")[6];
+            //String  coloralerta_m = valormemoria.split("&")[7];
+            //String  analisis_m  = valormemoria.split("&")[8];
+            //String conclusiones_m = valormemoria.split("&")[9];
+
+
+            if(tiponotificacion2.equals("n04") && volcan.equals(Codigovolcan_reporteactividad) && fecha.equals(Fecha_reporteactividad) && hora.equals(Hora_reporteactividad) && tiponotificacion2_m.equals("n04") && volcan_m.equals(Codigovolcan_reporteactividad) && fecha_m.equals(Fecha_reporteactividad) && hora_m.equals(Hora_reporteactividad)){
                 Log.d("ENVIO  ORDINARIO? : ","NO");
             }
             else{
 
                 enviar_notificacion(Tiponotificacion_reporteactividad+"&"+Codigovolcan_reporteactividad+"&"+Fecha_reporteactividad+"&"+Hora_reporteactividad+"&"+Simulacro_reporteactividad+"&"+Horautc_reporteactividad+"&"+Pdfurl_reporteactividad+"&"+Coloralerta_reporteactividad+"&"+Analisis_reporteactividad+"&"+Conclusiones_reporteactividad, "n04");
+
+                notreporte1 = Tiponotificacion_reporteactividad+"&"+Codigovolcan_reporteactividad+"&"+Fecha_reporteactividad+"&"+Hora_reporteactividad+"&"+Simulacro_reporteactividad+"&"+Horautc_reporteactividad+"&"+Pdfurl_reporteactividad+"&"+Coloralerta_reporteactividad+"&"+Analisis_reporteactividad+"&"+Conclusiones_reporteactividad;
 
                 Conexionsql conn = new Conexionsql(getApplicationContext(),"bd_notificaciones", null,1 );
                 SQLiteDatabase db = conn.getWritableDatabase();
@@ -381,6 +510,18 @@ public class Periodwork extends Worker {
                 Long idresultante = db.insert(Utilidades.TABLA_NOTIFICACIONES, Utilidades.CAMPO_ID, values);
                 Log.d("el resultante: ","Resultante:" + idresultante + ""   );
                 Log.d("ENVIO ORDINARIO?: ","YES");
+
+
+                try {
+                    FileOutputStream fileOutputStream_tipo = getApplicationContext().openFileOutput("ultima_notificacion", Context.MODE_PRIVATE);
+                    fileOutputStream_tipo.write(notreporte1.getBytes());
+                    fileOutputStream_tipo.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
 

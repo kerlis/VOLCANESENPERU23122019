@@ -131,8 +131,11 @@ public class pagedivisor extends AppCompatActivity {
 
     Button comprobarinsercion;
     Button vertoken;
+    Button vermemoria;
+
     String valortoken;
 
+    String valormemoria;
 
     private static final String TAG = pagedivisor.class.getSimpleName();
 
@@ -148,6 +151,8 @@ public class pagedivisor extends AppCompatActivity {
         comprobarinsercion = findViewById(R.id.lastrecord);
 
          vertoken = findViewById(R.id.vertoken);
+
+         vermemoria = findViewById(R.id.vermemoria);
 
          /*
         Constraints constraints = null;
@@ -448,6 +453,31 @@ public class pagedivisor extends AppCompatActivity {
                  }
              }
          });
+
+
+         vermemoria.setOnClickListener(new View.OnClickListener(){
+             @Override
+             public void onClick(View arg0) {
+                 String file_memoria = getApplicationContext().getFilesDir() + "/"+"ultima_notificacion";
+                 try {
+                     FileInputStream filememoria = new FileInputStream(new File(file_memoria));
+                     InputStreamReader InputRead_memoria = new InputStreamReader(filememoria);
+                     char[] inputBuffer = new char[READ_BLOCK_SIZE];
+                     int charRead;
+                     charRead = InputRead_memoria.read(inputBuffer);
+                     valormemoria = String.copyValueOf(inputBuffer, 0, charRead);
+                     InputRead_memoria.close();
+                     Log.d(TAG, "VALOR MEMORIA: " + valormemoria);
+                 } catch (Exception e) {
+                     e.printStackTrace();
+                 }
+             }
+         });
+
+
+
+
+
 
 
 
