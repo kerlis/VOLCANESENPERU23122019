@@ -351,11 +351,14 @@ anterior ok!!
             android:name=".Recordvideo"
             android:label="@string/title_activity_recordvideo"
             android:theme="@style/AppTheme" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme" />
+
         <activity android:name=".Recordingvideo"></activity>
+
     </application>
 
 </manifest>
