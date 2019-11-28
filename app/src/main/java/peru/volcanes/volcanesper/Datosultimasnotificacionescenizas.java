@@ -6,7 +6,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -294,7 +293,7 @@ public class Datosultimasnotificacionescenizas extends FragmentActivity implemen
         Typeface fontAwesomeFont = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
         compartir.setTypeface(fontAwesomeFont);
         //   String substraccionpueblos= pueblos_subs.substring(1);
-        pueblos.setText("Pueblos: " + pueblos_dat);
+        pueblos.setText("Distritos: " + pueblos_dat);
         tipodeevento.setText("Tipo de evento: " + tipodeevento_dat);
         direccion.setText("Dirección: " + direccion_dat);
         radio.setText("Radio de dispersión: " + "mayor a " + radio_dat + " km");
@@ -333,7 +332,7 @@ public class Datosultimasnotificacionescenizas extends FragmentActivity implemen
                 //  String direccion_subs = direccion_dat.substring(0, direccion_dat.length() - 1);
                 //  String direccion_subs2 = direccion_subs.substring(1);
                 String shareBody  = "Alerta de dispersión de cenizas  " +
-                        "\n\n" + "Pueblos: " + pueblos_dat+
+                        "\n\n" + "Distritos: " + pueblos_dat+
                         "\n\n" + "Tipo de evento: " + tipodeevento_dat +
                         "\n\n" + "Dirección: " + direccion_dat +
                         "\n\n" + "Radio de dispersión: " + radio_dat +
@@ -345,7 +344,7 @@ public class Datosultimasnotificacionescenizas extends FragmentActivity implemen
                         "\n\n" + "Recomendaciones: " +
                         "\n\n" + recomendaciones_dat;
                 String shareSub = "Alerta de dispersión de cenizas  " +
-                        "\n\n" + "Pueblos: " + pueblos_dat+
+                        "\n\n" + "Distritos: " + pueblos_dat+
                         "\n\n" + "Tipo de evento: " + tipodeevento_dat +
                         "\n\n" + "Dirección: " + direccion_dat +
                         "\n\n" + "Radio de dispersión: " + radio_dat +

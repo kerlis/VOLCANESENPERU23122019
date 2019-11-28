@@ -347,7 +347,7 @@ public class Alertando extends FragmentActivity implements NavigationView.OnNavi
         Typeface fontAwesomeFont = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf");
         compartir.setTypeface(fontAwesomeFont);
      //   String substraccionpueblos= pueblos_subs.substring(1);
-        pueblos.setText("Pueblos: " + pueblos_dat);
+        pueblos.setText("Distritos: " + pueblos_dat);
         tipodeevento.setText("Tipo de Evento: " + tipodeevento_dat);
         direccion.setText("Dirección: " + direccion_dat);
         radio.setText("Radio de Dispersión: " + "mayor a " + radio_dat + " km");
@@ -409,7 +409,7 @@ public class Alertando extends FragmentActivity implements NavigationView.OnNavi
               //  String direccion_subs = direccion_dat.substring(0, direccion_dat.length() - 1);
               //  String direccion_subs2 = direccion_subs.substring(1);
                 String shareBody  = "Alerta de dispersión de cenizas  " +
-                        "\n\n" + "Pueblos: " + pueblos_dat+
+                        "\n\n" + "Distritos: " + pueblos_dat+
                         "\n\n" + "Tipo de evento: " + tipodeevento_dat +
                         "\n\n" + "Dirección: " + direccion_dat +
                         "\n\n" + "Radio de dispersión: " + radio_dat +
@@ -421,7 +421,7 @@ public class Alertando extends FragmentActivity implements NavigationView.OnNavi
                         "\n\n" + "Recomendaciones: " +
                         "\n\n" +  recomendaciones_dat;
                 String shareSub = "Alerta de dispersión de cenizas  " +
-                        "\n\n" + "Pueblos: " + pueblos_dat+
+                        "\n\n" + "Distritos: " + pueblos_dat+
                         "\n\n" + "Tipo de evento: " + tipodeevento_dat +
                         "\n\n" + "Dirección: " + direccion_dat +
                         "\n\n" + "Radio de dispersión: " + radio_dat +
