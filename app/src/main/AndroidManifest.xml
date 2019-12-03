@@ -359,6 +359,12 @@ anterior ok!!
 
         <activity android:name=".Recordingvideo"></activity>
 
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
+
     </application>
 
 </manifest>
